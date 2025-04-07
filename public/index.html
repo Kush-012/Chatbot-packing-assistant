@@ -1,0 +1,737 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PackPal - Smart Packing Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            background-color: #f3f4f6; /* Equivalent to Tailwind's bg-gray-100 */
+            color: #1f2937; /* Equivalent to Tailwind's text-gray-800 */
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .container {
+            background-color: #ffffff; /* Equivalent to Tailwind's bg-white */
+            border-radius: 0.75rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(to right, #2563eb, #3b82f6); /* Equivalent to Tailwind's from-blue-600 to-blue-500 */
+        }
+
+        .header h2,
+        .header p {
+            color: #ffffff; /* White text in header */
+        }
+
+        .welcome-banner {
+            background-color: #eff6ff; /* Equivalent to Tailwind's bg-blue-50 */
+            border-bottom: 1px solid #dbeafe; /* Equivalent to Tailwind's border-blue-100 */
+        }
+
+        .welcome-banner h3 {
+            color: #1e40af; /* Equivalent to Tailwind's text-blue-800 */
+        }
+
+        .welcome-banner p {
+            color: #1e40af; /* Equivalent to Tailwind's text-blue-700 */
+        }
+
+        .chat-area {
+            background-color: #f9fafb; /* Equivalent to Tailwind's bg-gray-50 */
+        }
+
+        .bot-message {
+            background-color: #ffffff; /* Equivalent to Tailwind's bg-white */
+            color: #1f2937; /* Equivalent to Tailwind's text-gray-800 */
+        }
+
+        .user-message {
+            background-color: #2563eb; /* Equivalent to Tailwind's bg-blue-600 */
+            color: #ffffff; /* White text */
+        }
+
+        .suggestion-chips {
+            background-color: #ffffff; /* Equivalent to Tailwind's bg-white */
+            border-top: 1px solid #f3f4f6; /* Equivalent to Tailwind's border-gray-100 */
+        }
+
+        .suggestion-chip {
+            background-color: #eff6ff; /* Equivalent to Tailwind's bg-blue-50 */
+            color: #2563eb; /* Equivalent to Tailwind's text-blue-600 */
+        }
+
+        .suggestion-chip:hover {
+            background-color: #dbeafe; /* Equivalent to Tailwind's hover:bg-blue-100 */
+        }
+
+        .input-area {
+            background-color: #ffffff; /* Equivalent to Tailwind's bg-white */
+            border-top: 1px solid #e5e7eb; /* Equivalent to Tailwind's border-gray-200 */
+        }
+
+        .input-field {
+            background-color: #f3f4f6; /* Equivalent to Tailwind's bg-gray-100 */
+            color: #374151; /* Equivalent to Tailwind's text-gray-700 */
+        }
+
+        .send-button {
+            background-color: #2563eb; /* Equivalent to Tailwind's bg-blue-600 */
+        }
+
+        .send-button:hover {
+            background-color: #1d4ed8; /* Equivalent to Tailwind's hover:bg-blue-700 */
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            background-color: #ffffff;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .sidebar-item {
+            color: #4b5563;
+            transition: background-color 0.2s;
+        }
+
+        .sidebar-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .sidebar-item.active {
+            background-color: #eff6ff;
+            color: #2563eb;
+        }
+
+        /* Dark mode */
+        body.dark-mode {
+            background-color: #111827; /* Equivalent to Tailwind's dark:bg-gray-900 */
+            color: #d1d5db; /* Equivalent to Tailwind's dark:text-gray-200 */
+        }
+
+        body.dark-mode .container {
+            background-color: #1f2937; /* Equivalent to Tailwind's dark:bg-gray-800 */
+        }
+
+        body.dark-mode .header {
+            background: linear-gradient(to right, #1e3a8a, #1e40af); /* Equivalent to Tailwind's dark:from-blue-800 dark:to-blue-700 */
+        }
+
+        body.dark-mode .welcome-banner {
+            background-color: #1e3a8a; /* Equivalent to Tailwind's dark:bg-blue-900 */
+            border-bottom: 1px solid #1e40af; /* Equivalent to Tailwind's dark:border-blue-800 */
+        }
+
+        body.dark-mode .welcome-banner h3 {
+            color: #93c5fd; /* Equivalent to Tailwind's dark:text-blue-200 */
+        }
+
+        body.dark-mode .welcome-banner p {
+            color: #bfdbfe; /* Equivalent to Tailwind's dark:text-blue-300 */
+        }
+
+        body.dark-mode .chat-area {
+            background-color: #111827; /* Equivalent to Tailwind's dark:bg-gray-900 */
+        }
+
+        body.dark-mode .bot-message {
+            background-color: #1f2937; /* Equivalent to Tailwind's dark:bg-gray-800 */
+            color: #d1d5db; /* Equivalent to Tailwind's dark:text-gray-200 */
+        }
+
+        body.dark-mode .user-message {
+            background-color: #1e40af; /* Equivalent to Tailwind's dark:bg-blue-700 */
+        }
+
+        body.dark-mode .suggestion-chips {
+            background-color: #1f2937; /* Equivalent to Tailwind's dark:bg-gray-800 */
+            border-top: 1px solid #374151; /* Equivalent to Tailwind's dark:border-gray-700 */
+        }
+
+        body.dark-mode .suggestion-chip {
+            background-color: #1e3a8a; /* Equivalent to Tailwind's dark:bg-blue-900 */
+            color: #bfdbfe; /* Equivalent to Tailwind's dark:text-blue-300 */
+        }
+
+        body.dark-mode .suggestion-chip:hover {
+            background-color: #1e40af; /* Equivalent to Tailwind's dark:hover:bg-blue-800 */
+        }
+
+        body.dark-mode .input-area {
+            background-color: #1f2937; /* Equivalent to Tailwind's dark:bg-gray-800 */
+            border-top: 1px solid #374151; /* Equivalent to Tailwind's dark:border-gray-700 */
+        }
+
+        body.dark-mode .input-field {
+            background-color: #374151; /* Equivalent to Tailwind's dark:bg-gray-700 */
+            color: #d1d5db; /* Equivalent to Tailwind's dark:text-gray-200 */
+        }
+
+        body.dark-mode .send-button {
+            background-color: #1e40af; /* Equivalent to Tailwind's dark:bg-blue-700 */
+        }
+
+        body.dark-mode .send-button:hover {
+            background-color: #1e3a8a; /* Equivalent to Tailwind's dark:hover:bg-blue-600 */
+        }
+
+        /* Dark mode sidebar */
+        body.dark-mode .sidebar {
+            background-color: #1f2937;
+            border-right: 1px solid #374151;
+        }
+
+        body.dark-mode .sidebar-item {
+            color: #d1d5db;
+        }
+
+        body.dark-mode .sidebar-item:hover {
+            background-color: #374151;
+        }
+
+        body.dark-mode .sidebar-item.active {
+            background-color: #1e3a8a;
+            color: #93c5fd;
+        }
+
+        /* Other styles */
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+
+        .animate-bounce {
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        /* New chat button */
+        .new-chat-btn {
+            background-color: #eff6ff;
+            color: #2563eb;
+            transition: all 0.2s;
+        }
+
+        .new-chat-btn:hover {
+            background-color: #dbeafe;
+        }
+
+        body.dark-mode .new-chat-btn {
+            background-color: #1e3a8a;
+            color: #93c5fd;
+        }
+
+        body.dark-mode .new-chat-btn:hover {
+            background-color: #1e40af;
+        }
+    </style>
+</head>
+<body class="h-screen flex items-center justify-center p-4">
+    <div class="container w-full max-w-6xl h-[90vh] rounded-xl shadow-lg flex overflow-hidden">
+        <!-- Sidebar -->
+        <div class="sidebar w-64 flex-shrink-0 flex flex-col">
+            <!-- Logo and new chat button -->
+            <div class="p-4 flex items-center space-x-2">
+                <div class="bg-blue-500 p-2 rounded-full">
+                    <i class="fas fa-suitcase text-white text-xl"></i>
+                </div>
+                <h1 class="font-bold text-xl">PackPal</h1>
+            </div>
+            
+            <!-- New chat button -->
+            <div class="px-4 pb-4">
+                <button id="new-chat-btn" class="new-chat-btn w-full py-2 px-4 rounded-lg flex items-center space-x-2">
+                    <i class="fas fa-plus"></i>
+                    <span>New chat</span>
+                </button>
+            </div>
+            
+            <!-- Chat history sections -->
+            <div class="flex-1 overflow-y-auto hide-scrollbar">
+                <!-- Today section -->
+                <div class="px-4 py-2">
+                    <h3 class="text-xs uppercase text-gray-500 font-medium">Today</h3>
+                    <div class="mt-2 space-y-1">
+                        <div class="sidebar-item p-2 rounded-lg text-sm cursor-pointer active">
+                            <div class="truncate">Packing for Summer Trip</div>
+                        </div>
+                        <div class="sidebar-item p-2 rounded-lg text-sm cursor-pointer">
+                            <div class="truncate">Beach Vacation Essentials</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Yesterday section -->
+                <div class="px-4 py-2 mt-2">
+                    <h3 class="text-xs uppercase text-gray-500 font-medium">Yesterday</h3>
+                    <div class="mt-2 space-y-1">
+                        <div class="sidebar-item p-2 rounded-lg text-sm cursor-pointer">
+                            <div class="truncate">Winter Hiking Gear</div>
+                        </div>
+                        <div class="sidebar-item p-2 rounded-lg text-sm cursor-pointer">
+                            <div class="truncate">Business Trip Checklist</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Previous 7 days -->
+                <div class="px-4 py-2 mt-2">
+                    <h3 class="text-xs uppercase text-gray-500 font-medium">Previous 7 Days</h3>
+                    <div class="mt-2 space-y-1">
+                        <div class="sidebar-item p-2 rounded-lg text-sm cursor-pointer">
+                            <div class="truncate">Camping Equipment List</div>
+                        </div>
+                        <div class="sidebar-item p-2 rounded-lg text-sm cursor-pointer">
+                            <div class="truncate">Travel Medication Checklist</div>
+                        </div>
+                        <div class="sidebar-item p-2 rounded-lg text-sm cursor-pointer">
+                            <div class="truncate">International Travel Essentials</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile section -->
+            <div class="p-4 border-t flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                    <i class="fas fa-user text-blue-600"></i>
+                </div>
+                <div class="text-sm">My Profile</div>
+            </div>
+        </div>
+        
+        <!-- Main chat area -->
+        <div class="flex-1 flex flex-col">
+            <!-- Header -->
+            <div class="header p-4 flex items-center justify-between">
+                <div>
+                    <h2 class="font-bold text-xl">Smart Packing Assistant</h2>
+                    <p class="text-blue-100 text-sm">Your travel companion</p>
+                </div>
+                <div class="text-white text-2xl flex space-x-2">
+                    <button class="hover:bg-blue-700 p-2 rounded-full" id="clear-history-btn">
+                        <i class="fas fa-trash-alt"></i>
+                    </button>
+                    <button class="hover:bg-blue-700 p-2 rounded-full" id="dark-mode-toggle">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Welcome banner -->
+            <div class="welcome-banner border-b p-4" id="welcome-banner">
+                <div class="flex items-start">
+                    <div class="flex-1">
+                        <h3 class="font-medium mb-1">Welcome to PackPal! 🧳</h3>
+                        <p class="text-sm">I can help you create packing lists, suggest items based on weather, and prepare for any trip.</p>
+                    </div>
+                    <button class="text-blue-400 hover:text-blue-600" onclick="document.getElementById('welcome-banner').classList.add('hidden')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Chat area -->
+            <div class="chat-area flex-1 overflow-y-auto p-4 space-y-4" id="messages">
+                <div class="flex items-start space-x-2 max-w-[80%]">
+                    <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-suitcase text-white text-sm"></i>
+                    </div>
+                    <div class="bot-message p-3 rounded-lg shadow-sm">
+                        <p class="text-sm">Hi there! 👋 I'm PackPal, your smart packing assistant. How can I help you prepare for your upcoming adventure?</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Suggestion chips -->
+            <div class="suggestion-chips border-t p-3 overflow-x-auto whitespace-nowrap hide-scrollbar" id="suggestion-chips">
+                <div class="inline-flex space-x-2">
+                    <button class="suggestion-chip px-4 py-2 rounded-full text-sm">Weekend trip</button>
+                    <button class="suggestion-chip px-4 py-2 rounded-full text-sm">Beach vacation</button>
+                    <button class="suggestion-chip px-4 py-2 rounded-full text-sm">Business travel</button>
+                    <button class="suggestion-chip px-4 py-2 rounded-full text-sm">Trek</button>
+                    <button class="suggestion-chip px-4 py-2 rounded-full text-sm">Camping trip</button>
+                </div>
+            </div>
+
+            <!-- Input area -->
+            <div class="input-area border-t p-4">
+                <form id="form" class="flex items-center space-x-2">
+                    <div class="flex-1 relative">
+                        <input id="input" type="text" placeholder="Ask about packing suggestions..." 
+                            class="input-field w-full py-3 px-4 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-400">
+                    </div>
+                    <button type="submit" id="send" class="send-button text-white p-3 rounded-full flex items-center justify-center">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const messages = document.getElementById('messages');
+        const form = document.getElementById('form');
+        const input = document.getElementById('input');
+        const suggestionChips = document.querySelectorAll('.suggestion-chip');
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const clearHistoryBtn = document.getElementById('clear-history-btn');
+        const newChatBtn = document.getElementById('new-chat-btn');
+        const sidebarItems = document.querySelectorAll('.sidebar-item');
+        
+        // Initialize chat history from localStorage if available
+        let chatHistory = JSON.parse(localStorage.getItem('packpal_chat_history')) || [];
+        
+        // Initialize dark mode from localStorage if available
+        const isDarkMode = localStorage.getItem('packpal_dark_mode') === 'true';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+        }
+        
+        // Dark mode toggle functionality
+        darkModeToggle.addEventListener('click', () => {
+            const isDark = document.body.classList.contains('dark-mode');
+            if (isDark) {
+                document.body.classList.remove('dark-mode');
+                localStorage.setItem('packpal_dark_mode', 'false');
+            } else {
+                document.body.classList.add('dark-mode');
+                localStorage.setItem('packpal_dark_mode', 'true');
+            }
+        });
+
+        // Clear history functionality
+        clearHistoryBtn.addEventListener('click', () => {
+            if (confirm('Would you like to clear your chat history?')) {
+                localStorage.removeItem('packpal_chat_history');
+                chatHistory = [];
+                messages.innerHTML = '';
+                addMessageToUI('Hi there! 👋 I\'m PackPal, your smart packing assistant. How can I help you prepare for your upcoming adventure?', false);
+            }
+        });
+        
+        // New chat functionality
+        newChatBtn.addEventListener('click', () => {
+            // Clear current chat
+            messages.innerHTML = '';
+            addMessageToUI('Hi there! 👋 I\'m PackPal, your smart packing assistant. How can I help you prepare for your upcoming adventure?', false);
+            
+            // Update sidebar selection
+            sidebarItems.forEach(item => item.classList.remove('active'));
+            sidebarItems[0].classList.add('active');
+        });
+        
+        // Sidebar item selection
+        sidebarItems.forEach(item => {
+            item.addEventListener('click', () => {
+                // Update active state
+                sidebarItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                
+                // In a real app, we would load the selected chat here
+                // For now, we'll just show a placeholder message
+                messages.innerHTML = '';
+                addMessageToUI(`Let's continue our conversation about ${item.textContent.trim()}. How can I help you today?`, false);
+            });
+        });
+
+        // Load previous chat history
+        function loadChatHistory() {
+            if (chatHistory.length > 0) {
+                chatHistory.forEach(msg => {
+                    addMessageToUI(msg.text, msg.isUser);
+                });
+                scrollToBottom();
+            }
+        }
+        
+        // Save a message to chat history
+        function saveMessageToHistory(text, isUser) {
+            chatHistory.push({ text, isUser });
+            localStorage.setItem('packpal_chat_history', JSON.stringify(chatHistory));
+        }
+
+        // Set up suggestion chips
+        suggestionChips.forEach(chip => {
+            chip.addEventListener('click', () => {
+                input.value = chip.textContent;
+                input.focus();
+            });
+        });
+
+        // Add message to UI only (not saving to history)
+        function addMessageToUI(text, isUser) {
+            const message = document.createElement('div');
+            message.className = `flex items-start space-x-2 ${isUser ? 'justify-end ml-auto' : 'max-w-[80%]'}`;
+
+            if (isUser) {
+                // User message
+                message.innerHTML = `
+                    <div class="user-message p-3 rounded-lg shadow-sm">
+                        <p class="text-sm">${text}</p>
+                    </div>
+                    <div class="w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-user text-white text-sm"></i>
+                    </div>
+                `;
+            } else {
+                // Bot message
+                message.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                        <i class="fas fa-suitcase text-white text-sm"></i>
+                    </div>
+                    <div class="bot-message p-3 rounded-lg shadow-sm">
+                        <div class="text-sm">${formatResponse(text)}</div>
+                    </div>
+                `;
+            }
+
+            messages.appendChild(message);
+            scrollToBottom();
+            
+            // If this is a bot message, extract and add any new suggestion chips
+            if (!isUser) {
+                updateSuggestionChips(text);
+            }
+        }
+        
+        // Add message to UI and save to history
+        function addMessage(text, isUser) {
+            addMessageToUI(text, isUser);
+            saveMessageToHistory(text, isUser);
+        }
+
+        function showTypingIndicator() {
+            const indicator = document.createElement('div');
+            indicator.className = 'flex items-start space-x-2 max-w-[80%]';
+            indicator.id = 'typing-indicator';
+            
+            indicator.innerHTML = `
+                <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center flex-shrink-0">
+                    <i class="fas fa-suitcase text-white text-sm"></i>
+                </div>
+                <div class="bot-message p-3 rounded-lg shadow-sm">
+                    <div class="flex space-x-1">
+                        <div class="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                        <div class="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                        <div class="w-2 h-2 bg-gray-300 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                    </div>
+                </div>
+            `;
+            messages.appendChild(indicator);
+            scrollToBottom();
+        }
+
+        function hideTypingIndicator() {
+            const indicator = document.getElementById('typing-indicator');
+            if (indicator) {
+                indicator.remove();
+            }
+        }
+
+        function scrollToBottom() {
+            messages.scrollTop = messages.scrollHeight;
+        }
+
+        function formatResponse(text) {
+            // Replace **text** with <strong>text</strong>
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong class="font-medium">$1</strong>');
+            
+            // Handle bullet points (lines starting with *)
+            let lines = text.split('\n');
+            let inList = false;
+            let formattedLines = [];
+            
+            for (let i = 0; i < lines.length; i++) {
+                let line = lines[i];
+                
+                // Check if line is a bullet point
+                if (line.trim().startsWith('* ')) {
+                    // If not already in a list, start a new list
+                    if (!inList) {
+                        formattedLines.push('<ul class="list-disc pl-5 space-y-1 mt-2">');
+                        inList = true;
+                    }
+                    // Add as list item, removing the * prefix
+                    formattedLines.push('<li>' + line.trim().substring(2) + '</li>');
+                } else {
+                    // If exiting a list, close it
+                    if (inList) {
+                        formattedLines.push('</ul>');
+                        inList = false;
+                    }
+                    formattedLines.push(line);
+                }
+            }
+            
+            // Close any open list
+            if (inList) {
+                formattedLines.push('</ul>');
+            }
+            
+            // Join lines back and replace remaining newlines with <br>
+            text = formattedLines.join('\n').replace(/\n/g, '<br>');
+            
+            return text;
+        }
+
+        // Look for possible follow-up questions in the bot response
+        function updateSuggestionChips(text) {
+            // Look for questions in the response
+            const questionPatterns = [
+                /Would you like (.*?)\?/gi,
+                /Do you need (.*?)\?/gi,
+                /Can I help with (.*?)\?/gi,
+                /Are you interested in (.*?)\?/gi
+            ];
+            
+            const suggestions = [];
+            
+            // Extract potential suggestions from questions
+            questionPatterns.forEach(pattern => {
+                const matches = text.matchAll(pattern);
+                for (const match of matches) {
+                    if (match[1]) {
+                        suggestions.push(match[1].trim());
+                    }
+                }
+            });
+            
+            // Only update if we found at least one suggestion
+            if (suggestions.length > 0) {
+                const chipContainer = document.querySelector('#suggestion-chips > div');
+                
+                // Clear existing chips except for the standard ones
+                const standardChips = Array.from(chipContainer.querySelectorAll('.suggestion-chip')).slice(0, 5);
+                chipContainer.innerHTML = '';
+                
+                // Add dynamic suggestions first
+                suggestions.forEach(suggestion => {
+                    const chip = document.createElement('button');
+                    chip.className = 'suggestion-chip px-4 py-2 rounded-full text-sm';
+                    chip.textContent = "Yes, " + suggestion;
+                    chip.addEventListener('click', () => {
+                        input.value = chip.textContent;
+                        input.focus();
+                    });
+                    chipContainer.appendChild(chip);
+                });
+                
+                // Add a separator
+                const separator = document.createElement('div');
+                separator.className = 'h-6 border-r border-blue-100 mx-2';
+                chipContainer.appendChild(separator);
+                
+                // Add standard chips back
+                standardChips.forEach(chip => {
+                    const newChip = chip.cloneNode(true);
+                    newChip.className = 'suggestion-chip px-4 py-2 rounded-full text-sm';
+                    chipContainer.appendChild(newChip);
+                });
+                
+                // Re-attach event listeners
+                document.querySelectorAll('.suggestion-chip').forEach(chip => {
+                    chip.addEventListener('click', () => {
+                        input.value = chip.textContent;
+                        input.focus();
+                    });
+                });
+            }
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (input.value) {
+                // Display user message
+                const userMessage = input.value;
+                addMessage(userMessage, true);
+                
+                // Clear input
+                input.value = '';
+                
+                // Show typing indicator
+                showTypingIndicator();
+                
+                try {
+                    // Send message to server
+                    const response = await fetch('/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            message: userMessage,
+                            history: chatHistory 
+                        }),
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        hideTypingIndicator();
+                        
+                        // Display bot message
+                        addMessage(data.response, false);
+                        
+                        // Simulate adding a new chat to sidebar
+                        const firstWords = userMessage.split(' ').slice(0, 3).join(' ');
+                        const newChatTitle = firstWords + (userMessage.length > firstWords.length ? '...' : '');
+                        
+                        // Create a new sidebar item at the top
+                        const sidebarSection = document.querySelector('.sidebar-item').parentNode;
+                        const newItem = document.createElement('div');
+                        newItem.className = 'sidebar-item p-2 rounded-lg text-sm cursor-pointer';
+                        newItem.innerHTML = `<div class="truncate">${newChatTitle}</div>`;
+                        
+                        // Add click handler
+                        newItem.addEventListener('click', () => {
+                            sidebarItems.forEach(i => i.classList.remove('active'));
+                            newItem.classList.add('active');
+                        });
+                        
+                        // Insert at top
+                        sidebarSection.insertBefore(newItem, sidebarSection.firstChild);
+                        
+                        // Make it active
+                        sidebarItems.forEach(i => i.classList.remove('active'));
+                        newItem.classList.add('active');
+                    } else {
+                        let errorMessage = 'Failed to get response';
+                        try {
+                            const errorData = await response.json();
+                            errorMessage = errorData.error || errorMessage;
+                        } catch (e) {
+                            console.error('Error parsing error response:', e);
+                        }
+                        
+                        hideTypingIndicator();
+                        addMessage(`Sorry, I encountered an error: ${errorMessage}`, false);
+                    }
+                } catch (error) {
+                    console.error('Network error:', error);
+                    hideTypingIndicator();
+                    addMessage('Sorry, I couldn\'t connect to the server. Please check your connection and try again.', false);
+                }
+            }
+        });
+
+        // Load chat history on page load
+        loadChatHistory();
+    </script>
+</body>
+</html>
